@@ -1,7 +1,7 @@
 ---
 title: "STAT/MATH 495: Problem Set 01"
 author: "WRITE YOUR NAME HERE"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+date: "2017-09-07"
 output:
   html_document:
     toc: true
@@ -16,6 +16,36 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=8, fig.height=4.5)
 
 # Load packages
 library(tidyverse)
+```
+
+
+### Load Data
+```{r}
+library(readr)
+train <- read_csv("train.csv")
+test <- read.csv("test.csv")
+```
+
+### Model
+```{r}
+mod <- lm(Survived ~ Sex + Age + Pclass, data=train)
+summary(mod)
+
+model <- glm(formula=Survived ~ Sex + Age + Pclass, data=train, family=binomial)
+```
+
+### Test the Model
+```{r}
+survived <- predict(mod, newdata=test, type = c("response", "terms"))
+
+survived <- predict.glm(model, newdata=test, type = "response")
+
+pred <- makeFun(mod)
+test$Survived <- round(pred(test$Pclass))
+
+sub <- test[,c(1,12)]
+
+write_csv(sub,"submission.csv")
 ```
 
 
