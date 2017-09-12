@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="WRITE YOUR NAME HERE" />
+<meta name="author" content="Meredith Manley (with help from Sara Culhane on producing a binary response variable with the test data)" />
 
 <meta name="date" content="2017-09-07" />
 
@@ -216,14 +216,49 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">STAT/MATH 495: Problem Set 01</h1>
-<h4 class="author"><em>WRITE YOUR NAME HERE</em></h4>
-<h4 class="date"><em>September 07, 2017</em></h4>
+<h4 class="author"><em>Meredith Manley (with help from Sara Culhane on producing a binary response variable with the test data)</em></h4>
+<h4 class="date"><em>2017-09-07</em></h4>
 
 </div>
 
 
-<div id="section" class="section level1">
-<h1></h1>
+<div id="load-data" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>train &lt;- read.csv(&quot;train.csv&quot;)
+test &lt;- read.csv(&quot;test.csv&quot;)</code></pre>
+</div>
+<div id="model" class="section level3">
+<h3>Model</h3>
+<pre class="r"><code>model &lt;- lm(Survived ~ Pclass + Sex, data=train)
+summary(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Survived ~ Pclass + Sex, data = train)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.9252 -0.2505 -0.0925  0.2328  0.9075 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.08327    0.04028   26.89   &lt;2e-16 ***
+## Pclass      -0.15803    0.01567  -10.09   &lt;2e-16 ***
+## Sexmale     -0.51667    0.02740  -18.85   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.3874 on 888 degrees of freedom
+## Multiple R-squared:  0.3677, Adjusted R-squared:  0.3663 
+## F-statistic: 258.2 on 2 and 888 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="test-the-model" class="section level3">
+<h3>Test the Model</h3>
+<pre class="r"><code>pred &lt;- makeFun(model)
+test$Survived &lt;- round(pred(test$Pclass, test$Sex))
+
+results &lt;- test[,c(1,12)]
+
+write.csv(results, file=&quot;submission.csv&quot;)</code></pre>
 </div>
 
 

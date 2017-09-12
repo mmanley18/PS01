@@ -1,14 +1,18 @@
 ---
-title: "STAT/MATH 495: Problem Set 01"
-author: "WRITE YOUR NAME HERE"
-date: "2017-09-07"
+title: 'STAT/MATH 495: Problem Set 01'
+author: Meredith Manley (with help from Sara Culhane on producing a binary response
+  variable with the test data)
+date: '2017-09-07'
 output:
   html_document:
-    toc: true
-    toc_float: true
+    collapsed: no
+    smooth_scroll: no
+    toc: yes
     toc_depth: 2
-    collapsed: false
-    smooth_scroll: false
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 ```{r setup, include=FALSE}
@@ -16,36 +20,32 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=8, fig.height=4.5)
 
 # Load packages
 library(tidyverse)
+library(mosaic)
+library(readr)
 ```
 
 
 ### Load Data
 ```{r}
-library(readr)
-train <- read_csv("train.csv")
+train <- read.csv("train.csv")
 test <- read.csv("test.csv")
 ```
 
 ### Model
 ```{r}
-mod <- lm(Survived ~ Sex + Age + Pclass, data=train)
-summary(mod)
-
-model <- glm(formula=Survived ~ Sex + Age + Pclass, data=train, family=binomial)
+model <- lm(Survived ~ Pclass + Sex, data=train)
+summary(model)
 ```
+
 
 ### Test the Model
 ```{r}
-survived <- predict(mod, newdata=test, type = c("response", "terms"))
+pred <- makeFun(model)
+test$Survived <- round(pred(test$Pclass, test$Sex))
 
-survived <- predict.glm(model, newdata=test, type = "response")
+results <- test[,c(1,12)]
 
-pred <- makeFun(mod)
-test$Survived <- round(pred(test$Pclass))
-
-sub <- test[,c(1,12)]
-
-write_csv(sub,"submission.csv")
+write.csv(results, file="submission.csv")
 ```
 
 
